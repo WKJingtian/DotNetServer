@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChillyRoom.BuildingGame.v1.GM";
+
+package chillyroom.buildinggame.v1.gm;
+
+service Leaderboard {
+    // 获取排行榜类型元数据
+    rpc GetLeaderboardTypes (GetLeaderboardTypesRequest) returns (GetLeaderboardTypesResponse);
+    // 分页拉取排行榜列表
+    rpc GetLeaderboardWithPagination (GetLeaderboardWithPaginationRequest) returns (GetLeaderboardWithPaginationResponse);
+    // 从排行榜移除，如果有移除失败的 PID，通过响应返回，不只需要检查 gRPC 错误码，还需要检查响应
+    rpc RemovePlayersFromLeaderboard (RemovePlayersFromLeaderboardRequest) returns (RemovePlayersFromLeaderboardResponse);
+}
+
+message GetLeaderboardTypesRequest {
+}
+
+message GetLeaderboardTypesResponse {
+    // 使用中文类型，可直接在 GM 上显示
+    repeated string leaderboard_types = 1;
+}
+
+message GetLeaderboardWithPaginationRequest {
+    // 排行榜类型，通过 GetLeaderboardTypes API 获取
+    string leaderboard_type = 1;
+    // 排名开始位置，索引从1开始，如果超过最大索引，返回空排行榜
+    int32 rank_start_index = 2;
+    // 返回排名数量
+    int32 number_of_ranks = 3;
+}
+
+message GetLeaderboardWithPaginationResponse {
+    repeated Rank ranks = 1;
+}
+
+message Rank {
+    int64 player_id = 1;
+    int64 score = 2;
+}
+
+message RemovePlayersFromLeaderboardRequest {
+    // 如果是封禁场景，需要将所有排行榜类型传入
+    repeated string leaderboard_types = 1;
+    repeated int64 player_ids = 2;
+}
+
+message RemovePlayersFromLeaderboardResponse {
+    repeated RemoveFailedInfo failed_list = 1;
+}
+
+message RemoveFailedInfo {
+    // 移除失败的排行榜类型
+    string leaderboard_type = 1;
+    // 移除失败的 PID
+    int64 player_id = 2;
+    // 移除失败原因
+    string reason = 3;
+}

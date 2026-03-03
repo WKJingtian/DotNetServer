@@ -1,0 +1,53 @@
+﻿{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:34119",
+      "sslPort": 44357
+    }
+  },
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DB_HOST": "10.10.0.56",
+        "DB_USER": "building-game",
+        "DB_PORT": "32277",
+        "DB_PASSWORD": "",
+        "CLIENT_CERT_KEY_PATH": "DBKeys/client.building-game.key",
+        "CLIENT_CERT_PATH": "DBKeys/client.building-game.crt",
+        "CA_CERT_PATH": "DBKeys/ca.crt",
+        "Nacos__ServerAddresses__0": "http://nacos-hs.common.svc.cluster.local:8848",
+        "Nacos__Namespace": "89514e72-614b-4f4f-ba75-8f4119cfb88d",
+        "MAIL_API": "dns:///deprecated",
+        "IM_API": "https://10.10.0.56:31408",
+        "REGION": "cn-sz",
+        "NOTIFYHUB_ENDPOINT": "http://10.10.0.56:30212",
+        "REFRESH_OK_TEMPLATE_ID": "558f10ad-dcb6-4f97-b935-d15befcb68ee",
+        "REFRESH_ERROR_TEMPLATE_ID": "253c9650-b6e3-43ea-a629-b17d99957d7e",
+        "REFRESH_WORLD_RANK_OK_TEMPLATE_ID": "183d19c0-2714-4d3b-b5f1-f462e27fd55a",
+        "REFRESH_WORLD_RANK_ERROR_TEMPLATE_ID": "82075e6a-147a-490a-940a-9ce48e3a5342",
+        "BAN_PLAYER_ERROR_TEMPLATE_ID": "cad95c9b-eba8-4bde-b8bb-a97bc77f5e9c",
+        "IS_CONSUMER": "true",
+        "LOCAL_SHARD_ID": "1051",
+        "MIN_SEASON_NUMBER_FOR_LOCAL_DIVISION": "65",
+        "NAMESPACE": "building-game",
+        "DANGER_TRUSTALL": "true"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

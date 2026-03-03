@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChillyRoom.ImService";
+
+enum UserRelationship {
+  None = 0;
+
+  Self = 1;
+
+  // 朋友请求已发出，待对方确认
+  FriendRequestSent = 2;
+
+  // 已收到对方的请求。未确认
+  FriendRequestPending = 3;
+
+  // 朋友请求已拒绝
+  FriendRequestDeclined = 4;
+
+  // 朋友请求已被对方拒绝
+  FriendRequestDeclinedByPeer = 5;
+
+  // 已确认为朋友
+  Friend = 10;
+
+  // 单向好友
+  Follow = 11;
+
+  // 拉黑对方未来的好友请求
+  BlockFriendRequest = 96;
+
+  // 对方不允许发送好友请求
+  BlockFriendRequestByPeer = 97;
+
+  // 已拉黑对方
+  Block = 98;
+
+  // 已被对方拉黑
+  BlockByPeer = 99;
+}
+
+enum MasterStatus
+{
+    Offline = 0;
+    Online = 1;
+    Busy = 2;
+}
+
+enum UserStatus
+{
+  Normal = 0;
+  Banned = 1;
+  SignOff = 2;
+}
+
+message UserRelation {
+  int64 user_id  = 1;
+  UserRelationship relationship = 2;
+}

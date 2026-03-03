@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "Common.proto";
+
+option csharp_namespace = "ChillyRoom.ImService";
+
+package chillyroom.im.v1;
+
+service MessagingAPI {
+  rpc SendMessageOnBehalfOfUser (SendMessageRequest) returns (SendMessageReply);
+  rpc SetOnlineStatus (SetOnlineStatusRequest) returns (SetOnlineStatusReply);
+  rpc SetMasterStatus (SetMasterStatusRequest) returns (SetMasterStatusReply);
+
+  rpc QueryUserRelationships (QueryUserRelationshipsRequest) returns (QueryUserRelationshipsReply);
+}
+
+enum ErrorCode {
+  Ok = 0;
+  UserNotFound = 80001;
+  UserNotOnline = 80002;
+  UserStatusInvalid = 80003;
+
+  Throttled = 80050;
+
+  NotSupported = 80100;
+}
+
+message SendMessageRequest {
+  int64 sender_user_id = 1;
+
+  oneof recipient_id {
+    string conversation_id  = 2;
+    int64 recipient_user_id = 3;
+  }
+
+  // 发送卡片type > ExtendedMessageTypeBegin(3000)
+  // 消息类型应使用统一注册的ID
+  int32 type = 4;
+
+  int32 game_id = 5;
+  google.protobuf.Timestamp expire_at = 6;
+  string required_version = 7;
+
+  string title = 8;
+  string background_image = 9;
+
+  int32 width = 10;
+  int32 height = 11;
+
+  string payload = 12;
+}
+
+message SendMessageReply {
+  oneof result_type {
+    ErrorDescription error = 1;
+    int64 message_id = 2;
+  }
+}
+
+message SetOnlineStatusRequest {
+  int64 user_id = 1;
+  int32 game_id = 2;
+
+  // 通用状态显示
+  optional string status_icon_url = 3;
+
+  // localization_template 和 template_values 需同时更新
+  optional string localization_template = 4;
+  repeated TemplateValue template_values = 5;
+
+  // 游戏可以用于传递特殊消息的字段
+  optional string app_specific_payload = 6;
+}
+
+message SetOnlineStatusReply {
+  optional ErrorDescription error = 1;
+}
+
+message SetMasterStatusRequest {
+  int64 user_id = 1;
+  MasterStatus status = 2;
+}
+
+message SetMasterStatusReply {
+  optional ErrorDescription error = 1;
+}
+
+message QueryUserRelationshipsRequest {
+  int64 user_id = 1;
+  repeated int64 query_user_ids = 2;
+}
+
+message QueryUserRelationshipsReply {
+  repeated UserRelation related_users = 1;
+}
+
+message TemplateValue {
+  string value = 1;
+  bool is_localized = 2;
+}
+
+message ErrorDescription {
+  ErrorCode code = 1;
+  string message = 2;
+}

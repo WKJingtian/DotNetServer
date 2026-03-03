@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+import "Common.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "ChillyRoom.ImService";
+
+package chillyroom.im.v1;
+
+service IMManagement {
+  rpc QueryUserProfile (QueryUserProfileRequest) returns (QueryUserProfileReply);
+  rpc SetUserProfile (SetUserProfileRequest) returns (SetUserProfileReply);
+  rpc GetRelatedUsers (GetRelatedUsersRequest) returns (GetRelatedUsersReply);
+  rpc GetRelationshipBetweenUsers (GetRelationshipBetweenUsersRequest) returns (GetRelationshipBetweenUsersReply);
+  rpc UpdateUserRelation (UpdateUserRelationRequest) returns (UpdateUserRelationReply);
+  rpc ListAvatarForAllGames (ListAvatarForAllGamesRequest) returns (ListAvatarForAllGamesReply);
+}
+
+message QueryUserProfileRequest
+{
+  repeated int64 user_ids = 1;
+}
+
+message QueryUserProfileReply
+{
+  repeated UserProfile profiles = 1;
+}
+
+message UserProfile
+{
+  int64 user_id = 1;
+  MasterStatus master_status = 2;
+  string nick_name = 3;
+  string avatar = 4;
+  string online_status_json = 5;
+  UserStatus user_side_status = 7;
+
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp last_active_at = 8;
+}
+
+message SetUserProfileRequest
+{
+  int64 user_id = 1;
+  optional string user_name = 2;
+  optional string avatar = 3;
+}
+
+message SetUserProfileReply
+{
+  UserProfile profile = 1;
+}
+
+message GetRelatedUsersRequest
+{
+  int64 user_id = 1;
+}
+
+message GetRelatedUsersReply
+{
+  repeated UserRelation related_users = 1;
+}
+
+message GetRelationshipBetweenUsersRequest
+{
+  int64 user_id = 1;
+  int64 target_user_id = 2;
+}
+
+message GetRelationshipBetweenUsersReply
+{
+  UserRelationship relationship_to = 1;
+  UserRelationship relationship_from = 2;
+}
+
+message UpdateUserRelationRequest
+{
+  int64 user_id = 1;
+  int64 target_user_id = 2;
+  UserRelationship relationship = 3;
+}
+
+message UpdateUserRelationReply
+{
+  UserRelationship relationship_to = 1;
+}
+
+message ListAvatarForAllGamesRequest
+{
+}
+
+message ListAvatarForAllGamesReply
+{
+  repeated AvatarWithGameId avatars = 1;
+}
+
+message AvatarWithGameId
+{
+  int32 game_id = 1;
+  string avatar_url = 2;
+}

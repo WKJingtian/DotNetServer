@@ -1,0 +1,30 @@
+{
+  "name": "@chillyroom/building-game-management-client",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "license": "UNLICENSED",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "dependencies": {
+    "@grpc/grpc-js": "1.12.6",
+    "@protobuf-ts/grpc-transport": "2.11.1",
+    "@protobuf-ts/runtime": "2.11.1",
+    "@protobuf-ts/runtime-rpc": "2.11.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "proto:gen": "rimraf src/generated && mkdirp src/generated &&  protoc --ts_out src/generated --proto_path src/protos src/protos/*.proto --experimental_allow_proto3_optional --ts_opt long_type_string,ts_nocheck",
+    "prepare": "yarn proto:gen && yarn build"
+  },
+  "devDependencies": {
+    "@protobuf-ts/plugin": "^2.9.4",
+    "@types/lodash": "^4.14.171",
+    "mkdirp": "^3.0.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.2"
+  },
+  "protoPath": "GameOutside/Protos",
+  "rpcServiceFiles": "gm.proto"
+}

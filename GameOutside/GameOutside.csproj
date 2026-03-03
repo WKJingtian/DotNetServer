@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ChillyRoom.PlayerGameSaveManagement" Version="0.2.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.76.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Sqids" Version="3.1.0" />
+    <PackageReference Include="AlibabaCloud.TairSDK" Version="1.5.0" />
+    <PackageReference Include="ChillyRoom.Infra.Analytics" Version="0.2.17" />
+    <PackageReference Include="ChillyRoom.Infra.ApiController" Version="0.2.9" />
+    <PackageReference Include="ChillyRoom.Infra.CensorService.Client" Version="0.1.1" />
+    <PackageReference Include="ChillyRoom.Infra.Extensions" Version="0.0.29" />
+    <PackageReference Include="ChillyRoom.Infra.Logging" Version="0.0.52" />
+    <PackageReference Include="ChillyRoom.Infra.OpenTelemetry" Version="1.10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <PackageReference Include="nacos-sdk-csharp" Version="1.3.10" />
+    <PackageReference Include="nacos-sdk-csharp.Extensions.Configuration" Version="1.3.10" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.3" />
+    <PackageReference Include="ChillyRoom.MailService.Client" Version="0.1.66" />
+    <PackageReference Include="ChillyRoom.GiftCodeApiService.Client" Version="1.1.16" />
+    <PackageReference Include="ChillyRoom.PayService.Client" Version="0.2.30" />
+    <PackageReference Include="ChillyRoom.GenericPlayerService.Client" Version="0.1.2" />
+    <PackageReference Include="ChillyRoom.Infra.LiveMessage" Version="0.2.4" />
+    <PackageReference Include="ChillyRoom.ImService.Client" Version="0.0.9" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
+    <PackageReference Include="ChillyRoom.NotifyHub.Client" Version="0.0.1" />
+    <PackageReference Include="ChillyRoom.GenericPlayerManagementService.Client" Version="0.1.12" />
+    <PackageReference Include="ChillyRoom.Infra.MQ" Version="0.5.17" />
+    <PackageReference Include="ChillyRoom.Functions.DBModel" Version="8.5.3" />
+    <PackageReference Include="ChillyRoom.Infra.PlatformDef.DBModel" Version="0.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\gm.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\gameoutside.proto" GrpcServices="Both" />
+  </ItemGroup>
+
+</Project>

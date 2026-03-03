@@ -1,0 +1,65 @@
+apiVersion: game.chilly.room/v1
+kind: ApiVisibility
+metadata:
+  name: gameoutside
+  namespace: building-game
+spec:
+  api:
+    - path: /UserInfo/*
+      require_auth: true
+    - path: /Division/*
+      require_auth: true
+    - path: /UserPayment/*
+      require_auth: true
+    - path: /UserLevel/*
+      require_auth: true
+    - path: /Game/*
+      require_auth: true
+    - path: /UserCard/*
+      require_auth: true
+    - path: /DeviceCollection/*
+      require_auth: true
+    - path: /UserCustomData/*
+      require_auth: true
+    - path: /GameMatch/*
+      require_auth: true
+    - path: /UserAttendance/*
+      require_auth: true
+    - path: /UserBattlePass/*
+      require_auth: true
+    - path: /Achievement/*
+      require_auth: true
+    - path: /Task/*
+      require_auth: true
+    - path: /MailBox/*
+      require_auth: true
+    - path: /GiftCode/*
+      require_auth: true
+    - path: /Friend/*
+      require_auth: true
+    - path: /Gm/*
+      require_auth: false
+    - path: /ClientVersion/*
+      require_auth: false
+    - path: /Activity/*
+      require_auth: true
+    - path: /MonthPass/*
+      require_auth: true
+    - path: /Pay/*
+      require_auth: true
+    - path: /PiggyBank/*
+      require_auth: true
+    - path: /AssistActivity/GetInfo
+      require_auth: true
+    - path: /AssistActivity/Assist
+      require_auth: false
+    - path: /Danmaku/*
+      require_auth: true
+      
+  context:
+    - origin
+    - access-control-request-method
+    - access-control-request-headers
+  environment: '*'
+  mode: current_cluster
+  port: 80

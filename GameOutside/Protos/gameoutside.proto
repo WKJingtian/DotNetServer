@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChillyRoom.BuildingGame.v1";
+
+package chillyroom.buildinggame.v1;
+
+service Group {
+    rpc GetGroupId (GetGroupIdRequest) returns (GetGroupIdResponse);
+}
+
+message GetGroupIdRequest
+{
+    int32 season_number = 1;
+    int32 division_number = 2;
+}
+
+message GetGroupIdResponse
+{
+    int32 group_id = 1;
+}

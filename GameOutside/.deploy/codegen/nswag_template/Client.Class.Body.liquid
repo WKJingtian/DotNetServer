@@ -1,0 +1,25 @@
+private byte[] Compress(string uncompressedString)
+{
+    var compressedBytes = System.Text.Encoding.UTF8.GetBytes(uncompressedString);
+    using (var msi = new System.IO.MemoryStream(compressedBytes))
+    using (var mso = new System.IO.MemoryStream()) {
+        using (var gs = new System.IO.Compression.GZipStream(mso, System.IO.Compression.CompressionMode.Compress)) {
+            msi.CopyTo(gs);
+        }
+       
+        return mso.ToArray();
+    }
+}
+
+private bool ContentIsGzipEncoded(System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+{
+    bool isGzip = false;
+    if (headers.TryGetValue("Content-Encoding", out var vlist) || headers.TryGetValue("content-encoding", out vlist))
+    {
+        foreach (var encoding in vlist)
+        {
+            isGzip = encoding == "gzip";
+        }
+    }
+    return isGzip;
+}

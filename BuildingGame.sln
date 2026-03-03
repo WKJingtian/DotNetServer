@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOutside", "GameOutside\GameOutside.csproj", "{75D8FE70-96BD-48A4-B02A-02ADEC33D138}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOutside.Test", "GameOutside.Test\GameOutside.Test.csproj", "{020EBA78-C3E3-41A5-8557-D4A3F9E3F759}"
+EndProject
+Global
+								GlobalSection(SolutionConfigurationPlatforms) = preSolution
+																Debug|Any CPU = Debug|Any CPU
+																Release|Any CPU = Release|Any CPU
+								EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75D8FE70-96BD-48A4-B02A-02ADEC33D138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75D8FE70-96BD-48A4-B02A-02ADEC33D138}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75D8FE70-96BD-48A4-B02A-02ADEC33D138}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75D8FE70-96BD-48A4-B02A-02ADEC33D138}.Release|Any CPU.Build.0 = Release|Any CPU
+		{020EBA78-C3E3-41A5-8557-D4A3F9E3F759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{020EBA78-C3E3-41A5-8557-D4A3F9E3F759}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{020EBA78-C3E3-41A5-8557-D4A3F9E3F759}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{020EBA78-C3E3-41A5-8557-D4A3F9E3F759}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

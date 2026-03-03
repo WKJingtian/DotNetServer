@@ -1,0 +1,46 @@
+protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Threading.CancellationToken cancellationToken)
+{
+    if (response == null || response.Content == null)
+    {
+{%- if GenerateNullableReferenceTypes -%}
+        return new ObjectResponseResult<T>(default(T)!, string.Empty);
+{%- else -%}
+        return new ObjectResponseResult<T>(default(T), string.Empty);
+{%- endif -%}
+    }
+
+    try
+    {
+        using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+{%- if UseSystemTextJson -%}
+        {
+            var typedBody = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(responseStream, {% if UseRequestAndResponseSerializationSettings %}Response{% endif %}JsonSerializerSettings, cancellationToken).ConfigureAwait(false);
+{%- else -%}
+        {
+            var readStream = responseStream;
+            if (ContentIsGzipEncoded(headers))
+            {
+                readStream = new System.IO.Compression.GZipStream(responseStream,
+                    System.IO.Compression.CompressionMode.Decompress,
+                    true);
+            }
+            using (var streamReader = new System.IO.StreamReader(readStream))
+            using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+            {
+                var serializer = Newtonsoft.Json.JsonSerializer.Create({% if UseRequestAndResponseSerializationSettings %}Response{% endif %}JsonSerializerSettings);
+                var typedBody = serializer.Deserialize<T>(jsonTextReader);
+{%- endif -%}
+{%- if GenerateNullableReferenceTypes -%}
+                return new ObjectResponseResult<T>(typedBody!, string.Empty);
+{%- else -%}
+                return new ObjectResponseResult<T>(typedBody, string.Empty);
+{%- endif -%}
+            }
+        }
+    }
+    catch ({% if UseSystemTextJson %}System.Text.Json.JsonException{% else %}Newtonsoft.Json.JsonException{% endif %} exception)
+    {
+        var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+        throw new {{ ExceptionClass }}<ErrorResponse>(message, (int)response.StatusCode, string.Empty, headers, exception);
+    }
+}

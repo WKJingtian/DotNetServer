@@ -1,0 +1,130 @@
+variables:
+  NAMESPACE: "building-game"
+  APPLICATION_NAME: "gameoutside"
+  DOCKER_IMAGE: "services-registry.cn-shenzhen.cr.aliyuncs.com/chillyroom/${NAMESPACE}-${APPLICATION_NAME}"
+  PROJECT_DIR: "GameOutside"
+
+stages:
+  - build
+  - gitops
+  - deploy
+  - codegen
+  - ready
+
+build_image:
+  stage: build
+  image:
+    name: "registry.cn-shenzhen.aliyuncs.com/cr_google_containers/kaniko-executor:v1.22.0-debug1"
+    entrypoint: [""]
+  variables:
+    ENVIRONMENT: development
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        ENVIRONMENT: production
+        DOCKER_IMAGE_TAG: $CI_COMMIT_TAG
+    - when: always
+      variables:
+        ENVIRONMENT: development
+        DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"services-registry.cn-shenzhen.cr.aliyuncs.com\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_REGISTRY_USERNAME}" "${DOCKER_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${PROJECT_DIR}"
+      --dockerfile "${PROJECT_DIR}/.deploy/Dockerfile"
+      --build-arg ENVIRONMENT=$ENVIRONMENT
+      --destination "${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}"
+      --cache=true
+      --cache-ttl=72h
+      --cache-repo "${DOCKER_IMAGE}-cache"
+
+build_consumer_image:
+  stage: build
+  image:
+    name: "registry.cn-shenzhen.aliyuncs.com/cr_google_containers/kaniko-executor:v1.22.0-debug1"
+    entrypoint: [""]
+  variables:
+    ENVIRONMENT: development
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        ENVIRONMENT: production
+        DOCKER_IMAGE_TAG: $CI_COMMIT_TAG
+    - when: always
+      variables:
+        ENVIRONMENT: development
+        DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"services-registry.cn-shenzhen.cr.aliyuncs.com\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_REGISTRY_USERNAME}" "${DOCKER_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${PROJECT_DIR}"
+      --dockerfile "${PROJECT_DIR}/.deploy/Dockerfile"
+      --build-arg ENVIRONMENT=$ENVIRONMENT
+      --destination "${DOCKER_IMAGE}-consumer:${DOCKER_IMAGE_TAG}"
+      --cache=true
+      --cache-ttl=72h
+      --cache-repo "${DOCKER_IMAGE}-cache"
+
+gitops:
+  image: "services-registry.cn-shenzhen.cr.aliyuncs.com/cr_dockerhub/curl:20240710"
+  environment:
+    name: development
+    kubernetes:
+      namespace: $NAMESPACE
+  variables:
+    ENVIRONMENT: development
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        ENVIRONMENT: production
+        DOCKER_IMAGE_TAG: $CI_COMMIT_TAG
+      when: on_success
+    - variables:
+        ENVIRONMENT: development
+        DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+      when: on_success
+  stage: gitops
+  script:
+    - request_body='{"resources":[{"manifest_type":0,"kustomization_resource_metadata":{"name":"gameoutside","namespace":"building-game","resource_kind":"Deployment"},"container_images":{"gameoutside":{"image":"'"${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}"'","cluster_names":["cn-sz"]}}}]}'
+    - curl -X POST --fail http://devops-manager.devops/v1/image -d "$request_body" --retry 3
+
+deploy:
+  image: "registry.cn-shenzhen.aliyuncs.com/cr_dockerhub/helm-kubectl:ci"
+  environment:
+    name: development
+    kubernetes:
+      namespace: $NAMESPACE
+  stage: deploy
+  before_script: # 切换到深圳kubeconfig
+    - cat "$CN_SZ_KUBECONFIG" > /kubeconfig
+  script:
+    - cd $PROJECT_DIR
+    - apply_output=$(kubectl --kubeconfig /kubeconfig apply -f .deploy/apis.yaml -n $NAMESPACE)
+    - if echo "$apply_output" | grep -q "unchanged"; then echo "URL配置未变化，跳过重启网关操作"; else kubectl --kubeconfig /kubeconfig -n $NAMESPACE rollout restart deploy api-gateway; fi
+
+codegen:
+  image: "registry.cn-shenzhen.aliyuncs.com/cr_dockerhub/buildkit:20230505-1"
+  stage: codegen
+  script:
+    - cd $PROJECT_DIR/.deploy/codegen
+    - ~/.dotnet/tools/nswag run
+    - cd - && cp $PROJECT_DIR/.deploy/codegen/API.cs API.cs
+    - chillyroom generate integration API.cs
+  artifacts:
+    paths:
+      - API.cs
+      - Integration.cs
+
+reboot:
+  image: "registry.cn-shenzhen.aliyuncs.com/cr_dockerhub/helm-kubectl:ci"
+  stage: ready
+  when: manual
+  before_script: # 切换到深圳kubeconfig
+    - cat "$CN_SZ_KUBECONFIG" > /kubeconfig
+  script:
+    - kubectl --kubeconfig /kubeconfig -n $NAMESPACE rollout restart deploy $APPLICATION_NAME
+    - kubectl --kubeconfig /kubeconfig -n $NAMESPACE rollout status deploy $APPLICATION_NAME

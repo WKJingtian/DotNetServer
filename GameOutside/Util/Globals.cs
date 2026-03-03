@@ -1,0 +1,1 @@
+﻿global using PlayerIdShardId = (long PlayerId, short ShardId);

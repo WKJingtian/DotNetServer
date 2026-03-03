@@ -1,0 +1,17 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
+
+stages:
+  - trigger
+  - codegen
+
+game-outside:
+  stage: trigger
+  rules:
+    - changes:
+        - GameOutside/**/*
+  trigger:
+    include: GameOutside/.gitlab-ci.yml
+    strategy: depend
